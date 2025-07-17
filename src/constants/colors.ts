@@ -6,5 +6,8 @@ export const Colors = {
   container: '#13183C',
   green: '#19FF05',
   red: '#FF3F3F',
-  percent:'#00FFD1'
+  percent: '#00FFD1',
+  chartLine: '#9CB8FF',
+  button: '#152652',
+  secondaryButton: '#0043F0',
 };

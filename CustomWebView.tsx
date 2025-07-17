@@ -10,13 +10,6 @@ const CustomWebView = () => {
   const webViewRef = useRef(null);
   // const [data, setData] = React.useState(generateMockData1(24, 60 * 60)); // 24 hours of data with 1 hour intervals
 
-  const getSource = () => {
-    if (Platform.OS === 'android') {
-      return { uri: 'file:///android_asset/chart.html' };
-    } else {
-      return require('./assets/chart.html'); // relative path for iOS
-    }
-  };
 
   const htmlContent = `
     <html>

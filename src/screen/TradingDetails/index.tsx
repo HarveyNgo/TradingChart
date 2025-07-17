@@ -10,6 +10,9 @@ import { generateOrderBook, generateTradeData } from '../../utils/generateData';
 import { CurrencyPair } from '../../types/currency';
 import Trade from './components/Trade';
 import { Colors } from '../../constants/colors';
+import ChartWebView from './components/ChartWebView';
+import TimeButtonList from './components/TimeButtonList';
+import SecondaryButtonList from './components/SecondaryButtonList';
 
 const TradingDetailsScreen = () => {
   return (
@@ -31,12 +34,26 @@ const TradingDetailsScreen = () => {
 
         <View style={styles.chartAndOrderAndTrade}>
           <View style={styles.chartContainer}>
-            <CryptoText>aa</CryptoText>
+            <ChartWebView />
+            <View style={styles.chartFooter}>
+              <TimeButtonList
+                onTimeButtonPress={function (id: number): void {
+                  throw new Error('Function not implemented.');
+                }}
+              />
+              <SecondaryButtonList />
+            </View>
           </View>
           <View style={styles.orderTradeContainer}>
             <OrderBook title={'Order Book'} listData={generateOrderBook()} />
             <Trade title={'Trade'} listData={generateTradeData()} />
           </View>
+        </View>
+
+        <View style={styles.footer}>
+          <CryptoText style={{ color: Colors.white, fontSize: 14 }}>
+            Recent Trades
+          </CryptoText>
         </View>
       </ScrollView>
     </ScreenContainer>
@@ -44,8 +61,8 @@ const TradingDetailsScreen = () => {
 };
 
 export const styles = StyleSheet.create({
-  scroll:{flex:1},
-  scrollContent:{flexGrow:1},
+  scroll: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
   summary: {
     marginHorizontal: 20,
     display: 'flex',
@@ -64,12 +81,22 @@ export const styles = StyleSheet.create({
   chartContainer: {
     flex: 0.7,
     backgroundColor: Colors.container,
-    borderRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
     marginRight: 12,
+    paddingVertical: 17,
+    paddingRight: 17,
+    // height: 400,
   },
   orderTradeContainer: {
     flex: 0.3,
   },
+  chartFooter: {
+    marginTop: 7,
+  },
+  footer:{
+    marginTop: 17,
+  }
 });
 
 export default TradingDetailsScreen;
