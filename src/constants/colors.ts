@@ -10,4 +10,6 @@ export const Colors = {
   chartLine: '#9CB8FF',
   button: '#152652',
   secondaryButton: '#0043F0',
+  green_blur: '#19FF054D',
+  red_blur: '#FF3F3F4D',
 };

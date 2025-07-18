@@ -1,12 +1,14 @@
-import { useEffect, useRef } from 'react';
-import { generateMockData1 } from '../../../utils/generateData';
-import { View } from 'react-native';
+import { generateChartData } from '../../../utils/generateData';
+import { StyleSheet, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { Colors } from '../../../constants/colors';
+import React from 'react';
 
-const ChartWebView = () => {
-  const webViewRef = useRef(null);
+type Props = {
+  updateChart: boolean;
+};
 
+const ChartWebView = React.forwardRef<WebView, Props>(({}, webViewRef) => {
   const htmlContent = `
         <html>
           <head>
@@ -25,12 +27,11 @@ const ChartWebView = () => {
           <body>
             <div id="container"></div>
             <script>
-    
-             const originalLog = console.log;
-        console.log = function(...args) {
-          window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'log', message: args }));
-          originalLog.apply(console, args);
-        };
+              const originalLog = console.log;
+              console.log = function(...args) {
+                window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'log', message: args }));
+                originalLog.apply(console, args);
+              };
     
     
             // Create the Lightweight Chart within the container element
@@ -55,22 +56,39 @@ const ChartWebView = () => {
                 }
             );
         
-    
-            // const data = generateMockCandlestickData(24,1);
-             const data = ${JSON.stringify(generateMockData1(24, 1))};
-    
-            function formatForHistogramData(data) {
-            console.log('Formatted Histogram Data:', data);
-                return data.map(item => ({
-                    ...item,
-                    value: Math.abs(item.close - item.open),
-                    color: item.close > item.open ? ${JSON.stringify(
-                      Colors.green,
-                    )}:${JSON.stringify(Colors.red)},
-                }));
-            }
-    
-          
+            const data = ${JSON.stringify(generateChartData(24, 1))};
+            const lineSeriesOneData =  ${JSON.stringify(
+              generateChartData(24, 1),
+            )};
+             const lineSeriesTwoData =  ${JSON.stringify(
+               generateChartData(24, 1),
+             )};
+              function formatForMinMaxLineData(data) {
+                const values = data.map(item => item.value);
+                const minValueObject = data.reduce((minObj, item) => 
+                  item.value < minObj.value ? item : minObj
+                );
+                const maxValueObject = data.reduce((maxObj, item) => 
+                  item.value > maxObj.value ? item : maxObj
+                );
+                const newData =  [{
+                  ...minValueObject,
+                  time:data[0].time
+                }, {...maxValueObject,
+                  time:data[data.length-1].time
+                }]
+                  return newData;
+              }
+              function formatForHistogramData(data) {
+                  return data.map(item => ({
+                      ...item,
+                      value: Math.abs(item.close - item.open),
+                      color: item.close > item.open ? ${JSON.stringify(
+                        Colors.green_blur,
+                      )}:${JSON.stringify(Colors.red_blur)},
+                      
+                  }));
+              }
     
               const candleStickSeries = chart.addSeries(LightweightCharts.CandlestickSeries);
               candleStickSeries.applyOptions({
@@ -81,46 +99,78 @@ const ChartWebView = () => {
               });
               candleStickSeries.priceScale().applyOptions({
                   scaleMargins: {
-                    top: 0.1,
+                    top: 0.5,
                     bottom: 0,
                   },
                 });
               candleStickSeries.setData(data);
           
-            const lineSeries = chart.addSeries(LightweightCharts.LineSeries);
-            lineSeries.setData(data);
+              const lineSeriesOne= chart.addSeries(LightweightCharts.LineSeries);
+              lineSeriesOne.setData(lineSeriesOneData);
+
+              const lineSeriesTwo= chart.addSeries(LightweightCharts.LineSeries);
+              lineSeriesTwo.applyOptions({
+                 lineStyle: 1,
+              });
+              lineSeriesTwo.setData(lineSeriesTwoData);
     
-          //   const minMaxLineSeries = chart.addSeries(LightweightCharts.LineSeries);
-          //   minMaxLineSeries.setData(formatForMinMaxLineData(data));
+              const minMaxLineSeries = chart.addSeries(LightweightCharts.LineSeries);
+              minMaxLineSeries.setData(formatForMinMaxLineData(data));
+        
+              const histogramSeries = chart.addSeries(LightweightCharts.HistogramSeries);
+              histogramSeries.setData(formatForHistogramData(data));
+        
+              /** style Chart */
+              const currentLocale = window.navigator.languages[0];
+              const myPriceFormatter = Intl.NumberFormat(currentLocale, {
+                  style: 'currency',
+                  currency: 'USD', 
+              }).format;
+              chart.applyOptions({
+                  localization: {
+                      priceFormatter: myPriceFormatter,
+                  },
+              });
+              chart.timeScale().fitContent();
+               /** style Chart */
+        
+              function updateCandleStick(newData) {  
+                candleStickSeries.setData(newData);
+              }
+        
+              function updateLineSeriesOne(newData) {  
+                lineSeriesOne.setData(newData);
+              }
+              function updateLineSeriesTwo(newData) {  
+                lineSeriesTwo.setData(newData);
+              }
+              function updateHistogram(newData) {
+                histogramSeries.setData(newData);
+              }
+              function updateMinMaxLineSeries(newData){
+                minMaxLineSeries.setData(newData);
+              }
     
-          const histogramSeries = chart.addSeries(LightweightCharts.HistogramSeries);
-          histogramSeries.setData(formatForHistogramData(data));
     
-          chart.timeScale().fitContent();
-    
-          function updateCandleStick(newData) {  
-            candleStickSeries.setData(newData);
-          }
-    
-           function updateLineSeries(newData) {  
-            lineSeries.setData(newData);
-          }
-          function updateHistogram(newData) {
-            histogramSeries.setData(newData);
-          }
-    
-    
-          document.addEventListener('message', (event) => {
-                const msg = JSON.parse(event.data);
-                // document.getElementById('container').textContent = 'Message received: ' + JSON.stringify(msg.data);
-    
-                if(msg.type === 'stick') {
-                  data.push(msg.data[0]);
-                  console.log('Received new datasss:', data);
-                  updateCandleStick(data);
-                  updateLineSeries(data);
-                  updateHistogram(formatForHistogramData(data));
-                }
+              document.addEventListener('message', (event) => {
+                    const msg = JSON.parse(event.data);
+                    if(msg.type === 'stick') {
+                      data.push(msg.data[0]);
+                      lineSeriesOneData.push(msg.data[0]);
+                      lineSeriesTwoData.push(msg.data[0]);
+                      updateCandleStick(data);
+                      updateLineSeriesOne(lineSeriesOneData);
+                      updateLineSeriesTwo(lineSeriesTwoData);
+                      updateHistogram(formatForHistogramData(data));
+                      updateMinMaxLineSeries(formatForMinMaxLineData(data))
+                    }else {
+                      updateCandleStick(msg.data);
+                      updateLineSeriesOne(msg.data);
+                      updateLineSeriesTwo(msg.data);
+                      updateHistogram(formatForHistogramData(msg.data));
+                      updateMinMaxLineSeries(formatForMinMaxLineData(msg.data))
+                      chart.timeScale().fitContent();
+                    }
               });
     
             </script>
@@ -128,29 +178,15 @@ const ChartWebView = () => {
         </html>
         `;
 
-  // Send updated data every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const message = {
-        type: 'stick',
-        data: generateMockData1(1, 1),
-      };
-
-      webViewRef.current?.postMessage(JSON.stringify(message));
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <WebView
         ref={webViewRef}
         originWhitelist={['*']}
         source={{ html: htmlContent }}
         javaScriptEnabled
         domStorageEnabled
-        style={{ height:400 }}
+        style={styles.webViewHeight}
         scalesPageToFit
         onMessage={event => {
           try {
@@ -165,6 +201,15 @@ const ChartWebView = () => {
       />
     </View>
   );
-};
+});
 
-export default ChartWebView;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  webViewHeight: {
+    height: 300,
+  },
+});
+
+export default React.memo(ChartWebView);

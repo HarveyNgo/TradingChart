@@ -1,6 +1,5 @@
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../../constants/colors';
-import CryptoText from '../../../components/CryptoText';
 import { Icons } from '../../../assets';
 
 const secondaryButtons = [
@@ -29,7 +28,7 @@ const styles = StyleSheet.create({
     // justifyContsent: 'space-between',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginTop:27
+    marginTop: 27,
   },
   button: {
     backgroundColor: Colors.secondaryButton,

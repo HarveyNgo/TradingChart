@@ -1,6 +1,5 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { StyleSheet } from 'react-native';
-import CryptoText from '../../../components/CryptoText';
 import { Colors } from '../../../constants/colors';
 import HighLow from './HighLow';
 import Volume from './Volume';

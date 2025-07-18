@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
   TouchableWithoutFeedback,
   Image,
 } from 'react-native';
@@ -22,31 +21,10 @@ const CurrencyDropDown: React.FC<Props> = ({
   onSelectCurrencyPair,
   selectedCurrencyPair,
 }) => {
-  //   const categories = useAppSelector(state => state.notes.categories);
-  //   const categoryList = React.useMemo(
-  //     () =>
-  //       categories.map(category => ({
-  //         id: category.id,
-  //         name: category.name,
-  //       })),
-  //     [categories],
-  //   );
-
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [currentCurrencyPair, setCurrentCurrencyPair] = useState<CurrencyPair>(
     selectedCurrencyPair || currencyPairs[0],
   );
-
-  //   useEffect(() => {
-  //     if (selectedCategory) {
-  //       const categoryItem = categoryList.find(
-  //         category => category.id === selectedCategory,
-  //       );
-  //       setCurrentCategory(categoryItem?.name || '');
-  //     } else {
-  //       setCurrentCategory(t('choose_category'));
-  //     }
-  //   }, [categoryList, selectedCategory, t]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -70,18 +48,17 @@ const CurrencyDropDown: React.FC<Props> = ({
 
         {isDropdownOpen && (
           <View style={[styles.dropdownMenu, styles.dropdownShow]}>
-            <FlatList
-              data={currencyPairs}
-              keyExtractor={item => item.id}
-              renderItem={({ item }) => (
+            {currencyPairs.map(item => {
+              return (
                 <TouchableOpacity
+                  key={item.id}
                   style={styles.item}
                   onPress={() => selectCurrencyPairHandler(item)}
                 >
                   <Text style={styles.itemText}>{item.name}</Text>
                 </TouchableOpacity>
-              )}
-            />
+              );
+            })}
           </View>
         )}
       </View>

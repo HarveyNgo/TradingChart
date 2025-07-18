@@ -2,17 +2,25 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../../../constants/colors';
 import CryptoText from '../../../components/CryptoText';
 
+export enum TimeButtonEnum {
+  SevenDays = 'SevenDays',
+  OneMonth = 'OneMonth',
+  ThreeMonths = 'ThreeMonths',
+  OneYear = 'OneYear',
+  FiveYears = 'FiveYears',
+  Max = 'Max',
+}
 const timeButtons = [
-  { id: 1, label: '7D' },
-  { id: 2, label: '1M' },
-  { id: 3, label: '3M' },
-  { id: 4, label: '1Y' },
-  { id: 5, label: '5Y' },
-  { id: 6, label: 'MAX' },
+  { id: TimeButtonEnum.SevenDays, label: '7D' },
+  { id: TimeButtonEnum.OneMonth, label: '1M' },
+  { id: TimeButtonEnum.ThreeMonths, label: '3M' },
+  { id: TimeButtonEnum.OneYear, label: '1Y' },
+  { id: TimeButtonEnum.FiveYears, label: '5Y' },
+  { id: TimeButtonEnum.Max, label: 'MAX' },
 ];
 
 type Props = {
-  onTimeButtonPress: (id: number) => void;
+  onTimeButtonPress: (id: string) => void;
 };
 const TimeButtonList: React.FC<Props> = ({ onTimeButtonPress }) => {
   return (
@@ -36,7 +44,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    
   },
   button: {
     backgroundColor: Colors.button,

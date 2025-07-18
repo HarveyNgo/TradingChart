@@ -1,21 +1,129 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import ScreenContainer from '../../components/ScreenContainer';
 import HighLowVolume from './components/HighLowVolume';
-
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TotalAndDropdown from './components/TotalAndDrowDown';
-import CryptoText from '../../components/CryptoText';
 import OrderBook from './components/OrderBook';
-import { generateOrderBook, generateTradeData } from '../../utils/generateData';
-import { CurrencyPair } from '../../types/currency';
+import {
+  generateChartData,
+  generateOrderBook,
+  generateTradeData,
+} from '../../utils/generateData';
 import Trade from './components/Trade';
 import { Colors } from '../../constants/colors';
 import ChartWebView from './components/ChartWebView';
-import TimeButtonList from './components/TimeButtonList';
+import TimeButtonList, { TimeButtonEnum } from './components/TimeButtonList';
 import SecondaryButtonList from './components/SecondaryButtonList';
 import FooterButtonList from './components/FooterButtonList';
+import { OrderItem } from '../../types/order';
+import { TradeItem } from '../../types/trade';
 
 const TradingDetailsScreen = () => {
+  const [orderData, setOrderData] = useState<OrderItem[]>(generateOrderBook());
+  const [tradeData, setTradeData] = useState<TradeItem[]>(generateTradeData());
+  const webViewRef = useRef<
+    { postMessage: (message: string) => void } | null | any
+  >(null);
+  const [updateChart, setupdateChart] = useState<boolean>(false);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startInterval = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
+      setOrderData(generateOrderBook());
+      setTradeData(generateTradeData());
+
+      const message = {
+        type: 'stick',
+        data: generateChartData(1, 1),
+      };
+      webViewRef.current?.postMessage(JSON.stringify(message));
+    }, 5000);
+  };
+
+  useEffect(() => {
+    startInterval();
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  const handleTimeSelection = (timeId: string) => {
+    switch (timeId) {
+      case TimeButtonEnum.SevenDays:
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            type: TimeButtonEnum.SevenDays,
+            data: generateChartData(7, 60 * 60 * 24),
+          }),
+        );
+        break;
+      case TimeButtonEnum.OneMonth:
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            type: TimeButtonEnum.OneMonth,
+            data: generateChartData(30, 60 * 60 * 24),
+          }),
+        );
+        break;
+      case TimeButtonEnum.ThreeMonths:
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            type: TimeButtonEnum.ThreeMonths,
+            data: generateChartData(90, 60 * 60 * 24),
+          }),
+        );
+        break;
+      case TimeButtonEnum.OneYear:
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            type: TimeButtonEnum.OneYear,
+            data: generateChartData(12, 60 * 60 * 24 * 30),
+          }),
+        );
+        break;
+      case TimeButtonEnum.FiveYears:
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            type: TimeButtonEnum.FiveYears,
+            data: generateChartData(12 * 5, 60 * 60 * 24 * 30),
+          }),
+        );
+        break;
+      default:
+        setupdateChart(!updateChart);
+        webViewRef.current?.postMessage(
+          JSON.stringify({
+            type: TimeButtonEnum.Max,
+            data: generateChartData(24, 1),
+          }),
+        );
+        startInterval();
+        break;
+    }
+  };
+
   return (
     <ScreenContainer title="Trading Details">
       <ScrollView
@@ -27,8 +135,9 @@ const TradingDetailsScreen = () => {
         <View style={styles.summary}>
           <HighLowVolume />
           <TotalAndDropdown
-            onSelectCurrencyPair={function (currencyPair: CurrencyPair): void {
-              throw new Error('Function not implemented.');
+            onSelectCurrencyPair={() => {
+              setupdateChart(!updateChart);
+              startInterval();
             }}
           />
         </View>
@@ -36,14 +145,10 @@ const TradingDetailsScreen = () => {
         <View style={styles.chartAndOrderAndTrade}>
           <View style={styles.leftContainer}>
             <View style={styles.chartContainer}>
-              <ChartWebView />
+              <ChartWebView ref={webViewRef} updateChart={updateChart} />
 
               <View style={styles.chartFooter}>
-                <TimeButtonList
-                  onTimeButtonPress={function (id: number): void {
-                    throw new Error('Function not implemented.');
-                  }}
-                />
+                <TimeButtonList onTimeButtonPress={handleTimeSelection} />
                 <SecondaryButtonList />
               </View>
             </View>
@@ -52,8 +157,8 @@ const TradingDetailsScreen = () => {
             </View>
           </View>
           <View style={styles.orderTradeContainer}>
-            <OrderBook title={'Order Book'} listData={generateOrderBook()} />
-            <Trade title={'Trade'} listData={generateTradeData()} />
+            <OrderBook title={'Order Book'} listData={orderData} />
+            <Trade title={'Trade'} listData={tradeData} />
           </View>
         </View>
       </ScrollView>

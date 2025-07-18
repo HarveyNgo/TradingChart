@@ -1,44 +1,15 @@
-// export const generateMockData = days => {
-//   const result = [];
-//   let currentTime = Math.floor(Date.now() / 1000); // current time in seconds
-//   let lastClose = 100; // starting price
+import { OrderItem } from '../types/order';
+import { TradeItem } from '../types/trade';
 
-import { OrderItem } from "../types/order";
-import { TradeItem } from "../types/trade";
-
-//   for (let i = 0; i < days; i++) {
-//     const open = lastClose;
-//     const high = open + Math.random() * 5;
-//     const low = open - Math.random() * 5;
-//     const close = low + Math.random() * (high - low);
-//     const value = (high + low) / 2;
-
-//     result.push({
-//       time: currentTime,
-//       open: parseFloat(open.toFixed(2)),
-//       high: parseFloat(high.toFixed(2)),
-//       low: parseFloat(low.toFixed(2)),
-//       close: parseFloat(close.toFixed(2)),
-//       value: parseFloat(value.toFixed(2)),
-//       date: new Date(currentTime * 1000).toISOString().slice(0, 10), // yyyy-mm-dd
-//     });
-
-//     currentTime -= 60 * 60 * 24; // go back in time 1 day
-//     lastClose = close;
-//   }
-//   //   console.log('hung generateMockCandlestickData:', result);
-//   return result.reverse(); // oldest first
-// };
-
-export const generateMockData1 = (count: number, intervalSeconds: number) => {
+export const generateChartData = (count: number, intervalSeconds: number) => {
   const result = [];
   let currentTime = Math.floor(Date.now() / 1000); // current time in seconds
-  let lastClose = 100; // starting price
+  let lastClose = 20; // starting price
 
   for (let i = 0; i < count; i++) {
     const open = lastClose;
-    const high = open + Math.random() * 10;
-    const low = open - Math.random() * 10;
+    const high = open + Math.random() * 5;
+    const low = open - Math.random() * 5;
     const close = low + Math.random() * (high - low);
     const value = (high + low) / 2;
 
@@ -88,7 +59,6 @@ export function generateOrderBook(basePrice = 253.11, count = 6) {
 
   return orderBook;
 }
-
 
 export function generateTradeData(basePrice = 253.11, count = 6) {
   const tradeData = [];

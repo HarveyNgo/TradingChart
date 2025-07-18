@@ -7,7 +7,7 @@ import { currencyPairs } from '../../../data/currencyPair';
 type Props = {
   onSelectCurrencyPair: (currencyPair: CurrencyPair) => void;
 };
-const TotalAndDropdown : React.FC<Props>= ({onSelectCurrencyPair}) => {
+const TotalAndDropdown: React.FC<Props> = ({ onSelectCurrencyPair }) => {
   return (
     <View style={styles.totalAndDropdown}>
       <TotalAmount amount={66350.55} currency="$" />
@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
+    zIndex: 10,
   },
   space: {
     flex: 1,
