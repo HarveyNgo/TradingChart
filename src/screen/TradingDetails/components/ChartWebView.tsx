@@ -150,11 +150,9 @@ const ChartWebView = React.forwardRef<WebView, Props>(({}, webViewRef) => {
               function updateMinMaxLineSeries(newData){
                 minMaxLineSeries.setData(newData);
               }
-    
-    
-              window.addEventListener('message', (event) => {
+                      
+              function hanlePostMessage(event){
                     const msg = JSON.parse(event.data);
-                   
                     if(msg.type === 'stick') {
                       data.push(msg.data[0]);
                       lineSeriesOneData.push(msg.data[0]);
@@ -172,6 +170,14 @@ const ChartWebView = React.forwardRef<WebView, Props>(({}, webViewRef) => {
                       updateMinMaxLineSeries(formatForMinMaxLineData(msg.data))
                       chart.timeScale().fitContent();
                     }
+              }
+              //IOS
+              window.addEventListener('message', (event) => {
+                  hanlePostMessage(event);
+              });
+              //Android
+              document.addEventListener('message', (event) => {
+                  hanlePostMessage(event);
               });
     
             </script>
