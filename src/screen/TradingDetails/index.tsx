@@ -113,12 +113,6 @@ const TradingDetailsScreen = () => {
         break;
       default:
         setupdateChart(!updateChart);
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            type: TimeButtonEnum.Max,
-            data: generateChartData(24, 1),
-          }),
-        );
         startInterval();
         break;
     }
@@ -189,13 +183,11 @@ export const styles = StyleSheet.create({
     marginRight: 12,
   },
   chartContainer: {
-    // flex: 0.7,
     backgroundColor: Colors.container,
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
     paddingVertical: 17,
     paddingRight: 17,
-    // height: 400,
   },
   orderTradeContainer: {
     flex: 0.3,

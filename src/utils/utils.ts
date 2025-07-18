@@ -4,6 +4,5 @@ export function formatForHistogramData(data: any) {
     value: Math.abs(item.close - item.open),
     color: item.close > item.open ? 'green' : 'red',
   }));
-  console.log('Formatted Histogram Data:', aa);
   return aa;
 }

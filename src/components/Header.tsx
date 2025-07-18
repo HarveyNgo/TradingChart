@@ -23,7 +23,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 26,
-    // backgroundColor: 'red',
   },
   menu: {
     width: 24,

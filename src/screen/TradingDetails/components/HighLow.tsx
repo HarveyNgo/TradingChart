@@ -43,11 +43,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 14,
     marginTop: 8,
-    // font-weight: 500;
-    // font-size: 14px;
-    // leading-trim: NONE;
-    // line-height: 100%;
-    // letter-spacing: 0%;
   },
 });
 export default HighLow;

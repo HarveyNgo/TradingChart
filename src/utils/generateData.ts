@@ -23,7 +23,7 @@ export const generateChartData = (count: number, intervalSeconds: number) => {
       date: new Date(currentTime * 1000).toISOString().slice(0, 10), // yyyy-mm-dd
     });
 
-    currentTime -= intervalSeconds; // go back in time 1 day
+    currentTime -= intervalSeconds; // go back in time
     lastClose = close;
   }
 
@@ -89,7 +89,3 @@ export function generateTradeData(basePrice = 253.11, count = 6) {
 
   return tradeData;
 }
-
-// // Example usage
-// const orderBook = generateOrderBook();
-// console.log(JSON.stringify({ symbol: 'XYZ/USDT', orderBook }, null, 2));
