@@ -13,6 +13,7 @@ import { Colors } from '../../constants/colors';
 import ChartWebView from './components/ChartWebView';
 import TimeButtonList from './components/TimeButtonList';
 import SecondaryButtonList from './components/SecondaryButtonList';
+import FooterButtonList from './components/FooterButtonList';
 
 const TradingDetailsScreen = () => {
   return (
@@ -33,27 +34,27 @@ const TradingDetailsScreen = () => {
         </View>
 
         <View style={styles.chartAndOrderAndTrade}>
-          <View style={styles.chartContainer}>
-            <ChartWebView />
-            <View style={styles.chartFooter}>
-              <TimeButtonList
-                onTimeButtonPress={function (id: number): void {
-                  throw new Error('Function not implemented.');
-                }}
-              />
-              <SecondaryButtonList />
+          <View style={styles.leftContainer}>
+            <View style={styles.chartContainer}>
+              <ChartWebView />
+
+              <View style={styles.chartFooter}>
+                <TimeButtonList
+                  onTimeButtonPress={function (id: number): void {
+                    throw new Error('Function not implemented.');
+                  }}
+                />
+                <SecondaryButtonList />
+              </View>
+            </View>
+            <View style={styles.footer}>
+              <FooterButtonList />
             </View>
           </View>
           <View style={styles.orderTradeContainer}>
             <OrderBook title={'Order Book'} listData={generateOrderBook()} />
             <Trade title={'Trade'} listData={generateTradeData()} />
           </View>
-        </View>
-
-        <View style={styles.footer}>
-          <CryptoText style={{ color: Colors.white, fontSize: 14 }}>
-            Recent Trades
-          </CryptoText>
         </View>
       </ScrollView>
     </ScreenContainer>
@@ -78,12 +79,15 @@ export const styles = StyleSheet.create({
     marginTop: 24,
     marginRight: 20,
   },
-  chartContainer: {
+  leftContainer: {
     flex: 0.7,
+    marginRight: 12,
+  },
+  chartContainer: {
+    // flex: 0.7,
     backgroundColor: Colors.container,
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
-    marginRight: 12,
     paddingVertical: 17,
     paddingRight: 17,
     // height: 400,
@@ -94,9 +98,10 @@ export const styles = StyleSheet.create({
   chartFooter: {
     marginTop: 7,
   },
-  footer:{
+  footer: {
     marginTop: 17,
-  }
+    marginLeft: 16,
+  },
 });
 
 export default TradingDetailsScreen;
