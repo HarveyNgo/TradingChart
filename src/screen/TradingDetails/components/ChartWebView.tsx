@@ -171,7 +171,7 @@ const ChartWebView = React.forwardRef<WebView, Props>(({}, webViewRef) => {
                       chart.timeScale().fitContent();
                     }
               }
-              //IOS
+                    //IOS
               window.addEventListener('message', (event) => {
                   hanlePostMessage(event);
               });

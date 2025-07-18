@@ -45,6 +45,13 @@ const TradingDetailsScreen = () => {
     }, 5000);
   };
 
+  const handlePostMessage = (message: any) => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    webViewRef.current?.postMessage(JSON.stringify(message));
+  };
+
   useEffect(() => {
     startInterval();
     return () => {
@@ -57,59 +64,35 @@ const TradingDetailsScreen = () => {
   const handleTimeSelection = (timeId: string) => {
     switch (timeId) {
       case TimeButtonEnum.SevenDays:
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            type: TimeButtonEnum.SevenDays,
-            data: generateChartData(7, 60 * 60 * 24),
-          }),
-        );
+        handlePostMessage({
+          type: TimeButtonEnum.SevenDays,
+          data: generateChartData(7, 60 * 60 * 24),
+        });
+
         break;
       case TimeButtonEnum.OneMonth:
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            type: TimeButtonEnum.OneMonth,
-            data: generateChartData(30, 60 * 60 * 24),
-          }),
-        );
+        handlePostMessage({
+          type: TimeButtonEnum.OneMonth,
+          data: generateChartData(30, 60 * 60 * 24),
+        });
         break;
       case TimeButtonEnum.ThreeMonths:
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            type: TimeButtonEnum.ThreeMonths,
-            data: generateChartData(90, 60 * 60 * 24),
-          }),
-        );
+        handlePostMessage({
+          type: TimeButtonEnum.ThreeMonths,
+          data: generateChartData(90, 60 * 60 * 24),
+        });
         break;
       case TimeButtonEnum.OneYear:
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            type: TimeButtonEnum.OneYear,
-            data: generateChartData(12, 60 * 60 * 24 * 30),
-          }),
-        );
+        handlePostMessage({
+          type: TimeButtonEnum.OneYear,
+          data: generateChartData(12, 60 * 60 * 24 * 30),
+        });
         break;
       case TimeButtonEnum.FiveYears:
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-        webViewRef.current?.postMessage(
-          JSON.stringify({
-            type: TimeButtonEnum.FiveYears,
-            data: generateChartData(12 * 5, 60 * 60 * 24 * 30),
-          }),
-        );
+        handlePostMessage({
+          type: TimeButtonEnum.FiveYears,
+          data: generateChartData(12 * 5, 60 * 60 * 24 * 30),
+        });
         break;
       default:
         setupdateChart(!updateChart);
