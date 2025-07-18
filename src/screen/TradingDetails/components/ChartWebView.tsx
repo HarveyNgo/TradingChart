@@ -152,8 +152,9 @@ const ChartWebView = React.forwardRef<WebView, Props>(({}, webViewRef) => {
               }
     
     
-              document.addEventListener('message', (event) => {
+              window.addEventListener('message', (event) => {
                     const msg = JSON.parse(event.data);
+                   
                     if(msg.type === 'stick') {
                       data.push(msg.data[0]);
                       lineSeriesOneData.push(msg.data[0]);
